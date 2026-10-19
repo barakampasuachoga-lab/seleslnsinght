@@ -1,0 +1,4 @@
+customer_segment,sales,distinct_orders,profit,distinct_customers,aov,profit_margin_pct
+Consumer,1161401.34,2586,134119.21,409,449.11,11.55
+Corporate,706146.37,1514,91979.13,236,466.41,13.03
+Home Office,429653.15,909,60298.68,148,472.67,14.03

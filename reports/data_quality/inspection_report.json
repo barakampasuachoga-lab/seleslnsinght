@@ -1,0 +1,460 @@
+{
+  "source_name": "superstore.csv",
+  "total_rows": 9994,
+  "total_columns": 21,
+  "columns_info": {
+    "Row ID": {
+      "dtype": "int64",
+      "unique_count": 9994,
+      "unique_ratio": 1.0,
+      "sample_values": [
+        "1",
+        "2",
+        "3"
+      ]
+    },
+    "Order ID": {
+      "dtype": "str",
+      "unique_count": 5009,
+      "unique_ratio": 0.5012,
+      "sample_values": [
+        "CA-2016-152156",
+        "CA-2016-152156",
+        "CA-2016-138688"
+      ]
+    },
+    "Order Date": {
+      "dtype": "str",
+      "unique_count": 1237,
+      "unique_ratio": 0.1238,
+      "sample_values": [
+        "11-08-2016",
+        "11-08-2016",
+        "06-12-2016"
+      ]
+    },
+    "Ship Date": {
+      "dtype": "str",
+      "unique_count": 1334,
+      "unique_ratio": 0.1335,
+      "sample_values": [
+        "11-11-2016",
+        "11-11-2016",
+        "6/16/2016"
+      ]
+    },
+    "Ship Mode": {
+      "dtype": "str",
+      "unique_count": 4,
+      "unique_ratio": 0.0004,
+      "sample_values": [
+        "Second Class",
+        "Second Class",
+        "Second Class"
+      ]
+    },
+    "Customer ID": {
+      "dtype": "str",
+      "unique_count": 793,
+      "unique_ratio": 0.0793,
+      "sample_values": [
+        "CG-12520",
+        "CG-12520",
+        "DV-13045"
+      ]
+    },
+    "Customer Name": {
+      "dtype": "str",
+      "unique_count": 793,
+      "unique_ratio": 0.0793,
+      "sample_values": [
+        "Claire Gute",
+        "Claire Gute",
+        "Darrin Van Huff"
+      ]
+    },
+    "Segment": {
+      "dtype": "str",
+      "unique_count": 3,
+      "unique_ratio": 0.0003,
+      "sample_values": [
+        "Consumer",
+        "Consumer",
+        "Corporate"
+      ]
+    },
+    "Country": {
+      "dtype": "str",
+      "unique_count": 1,
+      "unique_ratio": 0.0001,
+      "sample_values": [
+        "United States",
+        "United States",
+        "United States"
+      ]
+    },
+    "City": {
+      "dtype": "str",
+      "unique_count": 531,
+      "unique_ratio": 0.0531,
+      "sample_values": [
+        "Henderson",
+        "Henderson",
+        "Los Angeles"
+      ]
+    },
+    "State": {
+      "dtype": "str",
+      "unique_count": 49,
+      "unique_ratio": 0.0049,
+      "sample_values": [
+        "Kentucky",
+        "Kentucky",
+        "California"
+      ]
+    },
+    "Postal Code": {
+      "dtype": "int64",
+      "unique_count": 631,
+      "unique_ratio": 0.0631,
+      "sample_values": [
+        "42420",
+        "42420",
+        "90036"
+      ]
+    },
+    "Region": {
+      "dtype": "str",
+      "unique_count": 4,
+      "unique_ratio": 0.0004,
+      "sample_values": [
+        "South",
+        "South",
+        "West"
+      ]
+    },
+    "Product ID": {
+      "dtype": "str",
+      "unique_count": 1862,
+      "unique_ratio": 0.1863,
+      "sample_values": [
+        "FUR-BO-10001798",
+        "FUR-CH-10000454",
+        "OFF-LA-10000240"
+      ]
+    },
+    "Category": {
+      "dtype": "str",
+      "unique_count": 3,
+      "unique_ratio": 0.0003,
+      "sample_values": [
+        "Furniture",
+        "Furniture",
+        "Office Supplies"
+      ]
+    },
+    "Sub-Category": {
+      "dtype": "str",
+      "unique_count": 17,
+      "unique_ratio": 0.0017,
+      "sample_values": [
+        "Bookcases",
+        "Chairs",
+        "Labels"
+      ]
+    },
+    "Product Name": {
+      "dtype": "str",
+      "unique_count": 1850,
+      "unique_ratio": 0.1851,
+      "sample_values": [
+        "Bush Somerset Collection Bookcase",
+        "Hon Deluxe Fabric Upholstered Stacking Chairs, Rounded Back",
+        "Self-Adhesive Address Labels for Typewriters by Universal"
+      ]
+    },
+    "Sales": {
+      "dtype": "float64",
+      "unique_count": 5825,
+      "unique_ratio": 0.5828,
+      "sample_values": [
+        "261.96",
+        "731.94",
+        "14.62"
+      ]
+    },
+    "Quantity": {
+      "dtype": "int64",
+      "unique_count": 14,
+      "unique_ratio": 0.0014,
+      "sample_values": [
+        "2",
+        "3",
+        "2"
+      ]
+    },
+    "Discount": {
+      "dtype": "float64",
+      "unique_count": 12,
+      "unique_ratio": 0.0012,
+      "sample_values": [
+        "0.0",
+        "0.0",
+        "0.0"
+      ]
+    },
+    "Profit": {
+      "dtype": "float64",
+      "unique_count": 7287,
+      "unique_ratio": 0.7291,
+      "sample_values": [
+        "41.9136",
+        "219.582",
+        "6.8714"
+      ]
+    }
+  },
+  "missing_summary": {
+    "Row ID": {
+      "count": 0,
+      "percentage": 0.0
+    },
+    "Order ID": {
+      "count": 0,
+      "percentage": 0.0
+    },
+    "Order Date": {
+      "count": 0,
+      "percentage": 0.0
+    },
+    "Ship Date": {
+      "count": 0,
+      "percentage": 0.0
+    },
+    "Ship Mode": {
+      "count": 0,
+      "percentage": 0.0
+    },
+    "Customer ID": {
+      "count": 0,
+      "percentage": 0.0
+    },
+    "Customer Name": {
+      "count": 0,
+      "percentage": 0.0
+    },
+    "Segment": {
+      "count": 0,
+      "percentage": 0.0
+    },
+    "Country": {
+      "count": 0,
+      "percentage": 0.0
+    },
+    "City": {
+      "count": 0,
+      "percentage": 0.0
+    },
+    "State": {
+      "count": 0,
+      "percentage": 0.0
+    },
+    "Postal Code": {
+      "count": 0,
+      "percentage": 0.0
+    },
+    "Region": {
+      "count": 0,
+      "percentage": 0.0
+    },
+    "Product ID": {
+      "count": 0,
+      "percentage": 0.0
+    },
+    "Category": {
+      "count": 0,
+      "percentage": 0.0
+    },
+    "Sub-Category": {
+      "count": 0,
+      "percentage": 0.0
+    },
+    "Product Name": {
+      "count": 0,
+      "percentage": 0.0
+    },
+    "Sales": {
+      "count": 0,
+      "percentage": 0.0
+    },
+    "Quantity": {
+      "count": 0,
+      "percentage": 0.0
+    },
+    "Discount": {
+      "count": 0,
+      "percentage": 0.0
+    },
+    "Profit": {
+      "count": 0,
+      "percentage": 0.0
+    }
+  },
+  "duplicate_rows_count": 0,
+  "duplicate_percentage": 0.0,
+  "numeric_summaries": {
+    "Row ID": {
+      "count": 9994,
+      "mean": 4997.5,
+      "std": 2885.1636,
+      "min": 1.0,
+      "q25": 2499.25,
+      "median": 4997.5,
+      "q75": 7495.75,
+      "max": 9994.0
+    },
+    "Postal Code": {
+      "count": 9994,
+      "mean": 55190.3794,
+      "std": 32063.6934,
+      "min": 1040.0,
+      "q25": 23223.0,
+      "median": 56430.5,
+      "q75": 90008.0,
+      "max": 99301.0
+    },
+    "Sales": {
+      "count": 9994,
+      "mean": 229.858,
+      "std": 623.2451,
+      "min": 0.444,
+      "q25": 17.28,
+      "median": 54.49,
+      "q75": 209.94,
+      "max": 22638.48
+    },
+    "Quantity": {
+      "count": 9994,
+      "mean": 3.7896,
+      "std": 2.2251,
+      "min": 1.0,
+      "q25": 2.0,
+      "median": 3.0,
+      "q75": 5.0,
+      "max": 14.0
+    },
+    "Discount": {
+      "count": 9994,
+      "mean": 0.1562,
+      "std": 0.2065,
+      "min": 0.0,
+      "q25": 0.0,
+      "median": 0.2,
+      "q75": 0.2,
+      "max": 0.8
+    },
+    "Profit": {
+      "count": 9994,
+      "mean": 28.6569,
+      "std": 234.2601,
+      "min": -6599.978,
+      "q25": 1.7288,
+      "median": 8.6665,
+      "q75": 29.364,
+      "max": 8399.976
+    }
+  },
+  "categorical_summaries": {
+    "Order ID": {
+      "unique_count": 5009,
+      "top_value": "CA-2017-100111",
+      "top_frequency": 14,
+      "top_percentage": 0.14
+    },
+    "Order Date": {
+      "unique_count": 1237,
+      "top_value": "09-05-2016",
+      "top_frequency": 38,
+      "top_percentage": 0.38
+    },
+    "Ship Date": {
+      "unique_count": 1334,
+      "top_value": "12/16/2015",
+      "top_frequency": 35,
+      "top_percentage": 0.35
+    },
+    "Ship Mode": {
+      "unique_count": 4,
+      "top_value": "Standard Class",
+      "top_frequency": 5968,
+      "top_percentage": 59.72
+    },
+    "Customer ID": {
+      "unique_count": 793,
+      "top_value": "WB-21850",
+      "top_frequency": 37,
+      "top_percentage": 0.37
+    },
+    "Customer Name": {
+      "unique_count": 793,
+      "top_value": "William Brown",
+      "top_frequency": 37,
+      "top_percentage": 0.37
+    },
+    "Segment": {
+      "unique_count": 3,
+      "top_value": "Consumer",
+      "top_frequency": 5191,
+      "top_percentage": 51.94
+    },
+    "Country": {
+      "unique_count": 1,
+      "top_value": "United States",
+      "top_frequency": 9994,
+      "top_percentage": 100.0
+    },
+    "City": {
+      "unique_count": 531,
+      "top_value": "New York City",
+      "top_frequency": 915,
+      "top_percentage": 9.16
+    },
+    "State": {
+      "unique_count": 49,
+      "top_value": "California",
+      "top_frequency": 2001,
+      "top_percentage": 20.02
+    },
+    "Region": {
+      "unique_count": 4,
+      "top_value": "West",
+      "top_frequency": 3203,
+      "top_percentage": 32.05
+    },
+    "Product ID": {
+      "unique_count": 1862,
+      "top_value": "OFF-PA-10001970",
+      "top_frequency": 19,
+      "top_percentage": 0.19
+    },
+    "Category": {
+      "unique_count": 3,
+      "top_value": "Office Supplies",
+      "top_frequency": 6026,
+      "top_percentage": 60.3
+    },
+    "Sub-Category": {
+      "unique_count": 17,
+      "top_value": "Binders",
+      "top_frequency": 1523,
+      "top_percentage": 15.24
+    },
+    "Product Name": {
+      "unique_count": 1850,
+      "top_value": "Staple envelope",
+      "top_frequency": 48,
+      "top_percentage": 0.48
+    }
+  },
+  "warnings": []
+}

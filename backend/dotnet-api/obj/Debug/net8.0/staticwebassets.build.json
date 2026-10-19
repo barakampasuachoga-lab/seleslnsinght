@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "bDfKv0vMWdCrxIP0F10ediZ4D97DEyC6opnOdglniHs=",
+  "Source": "SalesInsight.Api",
+  "BasePath": "_content/SalesInsight.Api",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

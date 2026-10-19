@@ -1,0 +1,37 @@
+# Dependencies and Environments
+node_modules/
+.venv/
+env/
+venv/
+ENV/
+
+# Build and Distribution
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Python Cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+coverage/
+htmlcov/
+
+# Logs and Databases
+*.log
+*.sqlite
+*.sqlite3
+*.db
+
+# Environment Variables & Secrets
+.env*
+!.env.example
+
+# OS and IDE files
+.DS_Store
+.vscode/
+.idea/
+*.swp

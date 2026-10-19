@@ -1,0 +1,5 @@
+region,sales,distinct_orders,profit,distinct_customers,aov,profit_margin_pct
+West,725457.82,1611,108418.45,686,450.32,14.94
+East,678781.24,1401,91522.78,674,484.5,13.48
+Central,501239.89,1175,39706.36,629,426.59,7.92
+South,391721.9,822,46749.43,512,476.55,11.93

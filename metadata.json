@@ -1,0 +1,6 @@
+{
+  "name": "SalesInsight - Retail Sales Analytics & BI System",
+  "description": "End-to-end retail sales data analysis, data quality validation, automated SQL analytics, Power BI reporting, and business intelligence.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,35 @@
+{
+  "sales": {
+    "q25": 17.28,
+    "q75": 209.94,
+    "iqr": 192.66,
+    "lower_bound": -271.71,
+    "upper_bound": 498.93,
+    "outlier_count": 1167,
+    "outlier_pct": 11.68,
+    "max_value": 22638.48,
+    "min_value": 0.44
+  },
+  "profit": {
+    "q25": 1.73,
+    "q75": 29.36,
+    "iqr": 27.64,
+    "lower_bound": -39.72,
+    "upper_bound": 70.82,
+    "outlier_count": 1881,
+    "outlier_pct": 18.82,
+    "max_value": 8399.98,
+    "min_value": -6599.98
+  },
+  "quantity": {
+    "q25": 2.0,
+    "q75": 5.0,
+    "iqr": 3.0,
+    "lower_bound": -2.5,
+    "upper_bound": 9.5,
+    "outlier_count": 170,
+    "outlier_pct": 1.7,
+    "max_value": 14.0,
+    "min_value": 1.0
+  }
+}
