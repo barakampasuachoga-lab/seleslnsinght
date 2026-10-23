@@ -1,0 +1,1632 @@
+SALESINSIGHT
+Enterprise-Grade Sales Analytics and Business Intelligence Platform
+ROLE AND EXPECTATIONS
+
+Act as a Staff Software Engineer, Senior Full-Stack Developer, Software Architect, Data Analyst, Database Engineer, Cybersecurity Engineer, and UI/UX Designer.
+
+Design and implement SalesInsight, a professional, secure, scalable, data-driven sales analytics and business intelligence platform.
+
+Do not produce a simple demonstration, static dashboard, or collection of disconnected pages. Build a functional software system with a real database, working authentication, backend APIs, a Python analytics engine, business reporting services, data visualization, and administrator controls.
+
+Make sound architectural decisions, follow software engineering best practices, write maintainable code, and test each major feature.
+
+Work incrementally. Inspect the current workspace before creating or modifying files. Reuse existing working code where appropriate. Never claim that a feature works unless it has been implemented and tested.
+
+1. PROJECT OVERVIEW
+
+Project name: SalesInsight
+
+Application type: Web-based sales analytics and business intelligence platform.
+
+Primary purpose: Enable individuals, retailers, small businesses, and organizations to upload sales data, clean and analyze it, discover business trends, visualize performance, and generate actionable reports.
+
+Problem Statement
+
+Many businesses collect sales data but lack the technical skills and tools needed to turn that data into useful business information. Sales records may be scattered across spreadsheets, contain errors, and provide little insight into revenue, profitability, product performance, customer purchasing behavior, or regional trends.
+
+Proposed Solution
+
+SalesInsight will provide a centralized platform where authenticated users can upload sales datasets, validate and clean their data, run analytical processes, explore interactive dashboards, compare business performance, and export reports.
+
+The platform will combine Python-based data analysis, a relational database, secure APIs, interactive frontend visualizations, and optional Power BI integration.
+
+Main Objectives
+Develop a secure platform for user registration, account management, and sales dataset management.
+Implement reliable sales data processing, analysis, visualization, and reporting using Python, PostgreSQL, Node.js, and C#.
+Provide role-based administration, business insights, data protection, and a professional user experience.
+2. REQUIRED TECHNOLOGY STACK
+
+Use the following architecture unless a genuine technical limitation requires a documented alternative.
+
+A. Frontend
+React.js
+TypeScript
+Vite
+Tailwind CSS
+React Router
+Axios
+Recharts or Plotly for interactive charts
+React Hook Form
+Zod for client-side validation
+A suitable icon library
+Responsive layouts for desktop, tablet, and mobile
+
+The frontend must communicate with backend services through authenticated APIs. It must not connect directly to PostgreSQL or contain database credentials.
+
+B. Main Application Backend
+
+Use Node.js with Express and TypeScript.
+
+Responsibilities:
+
+Authentication and account management.
+API gateway and application orchestration.
+Dataset upload management.
+User permissions and authorization.
+Analysis-job coordination.
+Communication with Python and C# services.
+Report access and download authorization.
+Notifications and audit-event coordination.
+API validation, rate limiting, and error handling.
+
+Use a maintainable layered architecture with routes, controllers, services, repositories, middleware, validation schemas, and configuration.
+
+C. Python Analytics Engine
+
+Use Python for analytical processing.
+
+Required libraries:
+
+Pandas
+NumPy
+Matplotlib
+Seaborn
+SQLAlchemy
+Psycopg for PostgreSQL connectivity
+Pydantic for data validation where useful
+Pytest for automated tests
+
+Optional libraries may include SciPy and scikit-learn when a clearly defined analytical feature requires them.
+
+Responsibilities:
+
+Dataset profiling.
+Data-quality analysis.
+Data cleaning and transformation.
+Descriptive statistics.
+Sales and profit calculations.
+Time-series analysis.
+Product and category analysis.
+Regional analysis.
+Discount and profitability analysis.
+Customer analysis when appropriate customer data exists.
+Forecasting when sufficient historical data is available.
+Generating structured analytical results.
+Creating downloadable charts and reports where appropriate.
+
+Expose analytical functionality through a documented Python service API or a well-defined asynchronous job interface.
+
+Do not execute arbitrary Python code supplied by users.
+
+D. C# Business and Reporting Service
+
+Use C# and ASP.NET Core Web API.
+
+Responsibilities:
+
+Business reporting.
+Report metadata and lifecycle management.
+Business rules and validation that belong to the reporting domain.
+Report generation and export coordination.
+Aggregated reporting endpoints.
+Reporting-related service integrations.
+Health checks and structured logging.
+
+Use dependency injection, configuration management, DTOs, validation, asynchronous operations, and automated tests.
+
+Avoid duplicating Python's analytical calculations in C#. Python is the primary analytics engine; C# manages business and reporting functionality.
+
+E. Database
+
+Use PostgreSQL.
+
+Requirements:
+
+Relational database design.
+Primary and foreign keys.
+Unique constraints.
+Appropriate indexes.
+Database migrations.
+Transactions where necessary.
+Consistent timestamps.
+Referential integrity.
+Parameterized queries or safe ORM operations.
+User and tenant data isolation.
+
+Use a supported ORM or query layer for each service. Keep database access behind service or repository boundaries.
+
+F. Business Intelligence Integration
+
+Support optional integration with Microsoft Power BI.
+
+Allow users to export suitable analytical datasets and reports for further analysis in Power BI.
+
+Do not make Power BI a requirement for core SalesInsight functionality. The application's own dashboard must work independently.
+
+3. SYSTEM ARCHITECTURE
+
+Implement the following logical architecture:
+
+React frontend.
+Node.js application API.
+PostgreSQL database.
+Python analytics service.
+C# reporting service.
+Background job processing.
+File storage abstraction.
+Email notification service.
+Logging and monitoring.
+Request Flow
+
+A user signs in through the React application.
+
+The frontend sends authenticated requests to the Node.js API.
+
+The API validates the session, checks authorization, and retrieves or updates permitted records.
+
+When a user requests an analysis, the API creates an analysis job and coordinates processing by the Python service.
+
+Python validates and analyzes the dataset, then stores or returns structured results through a defined service contract.
+
+The reporting service can organize those results into business reports and exportable documents.
+
+The frontend retrieves authorized results and displays them using interactive charts, tables, metrics, and filters.
+
+Service Communication
+
+Define explicit API contracts between services.
+
+Include:
+
+Request and response schemas.
+Versioned endpoints.
+Correlation IDs.
+Timeouts.
+Retry policies for appropriate transient failures.
+Idempotency for operations that may be retried.
+Consistent error formats.
+Service authentication.
+Health checks.
+
+Do not expose internal Python or C# service endpoints directly to the public internet unless there is a documented security requirement.
+
+Do not make unnecessary synchronous calls between services when a background job is more appropriate.
+
+4. USER REGISTRATION AND AUTHENTICATION
+
+Implement a complete authentication system.
+
+Registration Page
+
+Create a professional registration page with:
+
+Full name.
+Email address.
+Password.
+Confirm password.
+Optional company or business name.
+Terms of Service and Privacy Policy acceptance.
+
+Requirements:
+
+Validate required fields.
+Reject duplicate email addresses.
+Validate password strength.
+Confirm password matches.
+Normalize email addresses consistently.
+Hash passwords using a suitable password-hashing algorithm.
+Never store plain-text passwords.
+Return safe, understandable validation messages.
+Create accounts with a non-administrator default role.
+Support email verification where configured.
+Login Page
+
+Include:
+
+Email address.
+Password.
+Remember-me option implemented securely.
+Forgot-password link.
+Login button.
+Link to account registration.
+
+Successful authentication should redirect the user to their dashboard.
+
+Password Recovery
+
+Implement:
+
+Secure password-reset requests.
+Time-limited, single-use reset tokens.
+Email delivery through a configurable provider.
+Generic responses that do not reveal whether an account exists.
+Token invalidation after successful use.
+Session Management
+
+Use secure session management.
+
+Prefer HTTP-only cookies with Secure and appropriate SameSite settings in production.
+
+Implement CSRF protection where required by the authentication architecture.
+
+Support:
+
+Login.
+Logout.
+Session expiration.
+Session invalidation.
+Password changes.
+Secure account recovery.
+Appropriate reauthentication for sensitive actions.
+
+If refresh tokens are used, store and rotate them securely and support revocation.
+
+User Profile
+
+Allow authenticated users to:
+
+View their profile.
+Update permitted profile information.
+Change their password.
+Manage available preferences.
+Review account information.
+Log out.
+
+Never allow a user to assign themselves an administrator role through registration or profile updates.
+
+5. USER ROLES AND PERMISSIONS
+
+Implement server-enforced role-based access control.
+
+Role 1: Guest
+
+Guests may:
+
+View the public landing page.
+View About Us and Contact pages.
+Read public documentation.
+Register.
+Log in.
+Request password recovery.
+
+Guests must not access private datasets, reports, or dashboards.
+
+Role 2: Registered User
+
+Registered users may:
+
+Access their personal dashboard.
+Upload datasets.
+View their own uploaded datasets.
+Validate and clean their data.
+Run analyses.
+View analytical results.
+Create and export reports.
+Review their analysis history.
+Manage their profile.
+Delete their own datasets, subject to retention and dependency rules.
+Manage their own saved dashboard preferences.
+
+A user must never access another user's private records by changing a URL, database identifier, or API request.
+
+Role 3: Administrator
+
+Administrators may:
+
+Access a protected administration dashboard.
+View user-account summaries.
+Search and filter users.
+Activate or suspend accounts.
+Review system-wide job status.
+Monitor system health.
+Review audit events.
+View aggregated system statistics.
+Manage permitted system settings.
+Investigate operational errors.
+
+Administrative access must be checked on the server for every protected operation.
+
+Do not expose user passwords, password hashes, session tokens, reset tokens, or unnecessary private business data to administrators.
+
+Implement separate permissions for particularly sensitive operations if required.
+
+6. PUBLIC WEBSITE
+
+Create a polished public-facing website.
+
+Landing Page
+
+Include:
+
+SalesInsight branding.
+Navigation menu.
+Hero section.
+Clear explanation of the platform.
+Primary Create Account button.
+Secondary Log In button.
+Feature highlights.
+Example analytics visualizations using clearly labeled sample data.
+How It Works section.
+Benefits for businesses.
+Frequently Asked Questions.
+Footer with contact information, Privacy Policy, and Terms of Service.
+About Us
+
+Explain:
+
+The platform's purpose.
+The problem it solves.
+Its main capabilities.
+The importance of data-driven business decisions.
+Contact Page
+
+Include:
+
+Contact form.
+Name.
+Email.
+Subject.
+Message.
+Server-side validation.
+Rate limiting and spam protection.
+Appropriate success and error messages.
+
+Do not expose private server configuration or internal email credentials.
+
+7. USER DASHBOARD
+
+Create a professional analytics dashboard.
+
+Dashboard Header
+
+Include:
+
+Welcome message.
+User profile menu.
+Notifications area.
+Dataset selector.
+Date-range selector where applicable.
+Refresh controls.
+KPI Cards
+
+Calculate the following metrics when the dataset contains the necessary fields:
+
+Total Revenue.
+Total Profit.
+Total Orders.
+Units Sold.
+Average Order Value.
+Profit Margin.
+Sales Growth.
+Number of Products.
+
+For example:
+
+Revenue = sum of valid sales amounts.
+
+Profit Margin = total profit divided by total revenue, multiplied by 100, when revenue is nonzero and the necessary data is available.
+
+Average Order Value = total revenue divided by the number of distinct valid orders, when order identifiers are available.
+
+Define each metric clearly. Do not substitute row counts for distinct orders without explaining the limitation.
+
+If a metric cannot be calculated, explain which data is missing.
+
+Charts
+
+Implement suitable visualizations:
+
+Revenue over time.
+Profit over time.
+Sales by product.
+Sales by category.
+Sales by region.
+Top-performing products.
+Low-performing products.
+Revenue versus profit.
+Discount versus profitability.
+Order distribution.
+Customer performance when customer identifiers exist.
+
+Use suitable chart types and clear labels.
+
+Allow users to filter results by supported dimensions.
+
+All charts must use actual calculated results from the selected dataset. Sample charts must be labeled as sample data.
+
+8. DATASET MANAGEMENT
+
+Build a complete dataset-management module.
+
+Supported File Formats
+
+Initially support:
+
+CSV.
+Excel XLSX.
+
+Support XLS only if an appropriate, maintained library and reliable parsing workflow are available.
+
+Dataset Upload Page
+
+Allow users to:
+
+Select a file.
+Enter a dataset name.
+Add a description.
+Upload the file.
+Review upload progress.
+See validation results.
+Open the dataset details page.
+
+Validate:
+
+File extension.
+File signature where appropriate.
+File size.
+File content.
+Column count.
+Row count.
+Parsing errors.
+Empty files.
+Duplicate headers.
+Unexpected data types.
+
+Never trust the file extension alone.
+
+Configure file-size and row-count limits.
+
+Prevent unsafe filenames, path traversal, malicious content handling, and unauthorized downloads.
+
+Store files outside the public web root or use an appropriate private object-storage service.
+
+Dataset List
+
+Display:
+
+Dataset name.
+Upload date.
+File type.
+Number of rows.
+Number of columns.
+Processing status.
+Data-quality status.
+Last analysis date.
+Available actions.
+
+Available actions:
+
+View.
+Preview.
+Validate.
+Clean.
+Analyze.
+Rename.
+Delete.
+Export permitted data.
+
+Every operation must verify dataset ownership or an explicitly granted permission.
+
+Dataset Preview
+
+Display:
+
+Column names.
+Detected data types.
+Sample rows.
+Total row count.
+Missing values.
+Duplicate rows.
+Basic statistics.
+
+Use pagination or limits rather than loading extremely large datasets into the browser.
+
+9. DATA QUALITY AND CLEANING
+
+Implement a transparent data-quality workflow.
+
+Detect:
+
+Missing values.
+Duplicate records.
+Invalid dates.
+Invalid numeric values.
+Inconsistent column types.
+Negative values where they violate the selected business rules.
+Inconsistent category labels.
+Unexpected currencies.
+Impossible or suspicious values.
+Invalid order identifiers where applicable.
+
+For every cleaning operation:
+
+Explain the issue.
+Show the affected row or column count.
+Recommend an action.
+Allow the user to review changes.
+Record the selected operation.
+Preserve the original uploaded file.
+Store the cleaned result as a separate version or reproducible transformation.
+Record the transformation in the dataset history.
+
+Never silently discard important records.
+
+Distinguish between legitimate business values and data errors. For example, negative revenue or returns may be valid depending on the business context.
+
+Allow users to download a data-quality report.
+
+10. PYTHON ANALYTICS ENGINE
+
+Build a dedicated analytics module using Python.
+
+A. Dataset Profiling
+
+Generate:
+
+Row and column counts.
+Column names.
+Detected data types.
+Missing-value summaries.
+Duplicate counts.
+Numeric statistics.
+Categorical distributions.
+Date ranges.
+Candidate business identifiers.
+B. Sales Analysis
+
+Where the required data exists, calculate:
+
+Total sales.
+Total profit.
+Units sold.
+Order counts.
+Average order value.
+Profit margin.
+Sales growth.
+Sales by period.
+Sales by product.
+Sales by category.
+Sales by region.
+Sales by customer.
+Discount analysis.
+Returns analysis.
+
+Use clearly documented formulas and assumptions.
+
+C. Trend Analysis
+
+Support:
+
+Daily trends.
+Weekly trends.
+Monthly trends.
+Quarterly trends.
+Yearly trends.
+
+Use the actual date range and granularity of the dataset.
+
+Handle missing periods appropriately and explain when comparisons are incomplete.
+
+D. Product Performance
+
+Identify:
+
+Top products by revenue.
+Top products by profit.
+Low-performing products.
+Category contribution.
+Product sales trends.
+Product profitability.
+
+Do not automatically label a product unsuccessful based on revenue alone.
+
+E. Regional Analysis
+
+When geographic information is available, compare:
+
+Revenue.
+Profit.
+Order volume.
+Growth.
+Regional contribution.
+
+Do not assume every dataset contains valid geographic information.
+
+F. Customer Analysis
+
+When customer identifiers and suitable fields exist, support:
+
+Repeat-purchase analysis.
+Customer revenue.
+Customer purchase frequency.
+Customer segmentation using documented methods.
+Retention metrics when the data supports them.
+
+Do not invent customer identities or demographics.
+
+G. Forecasting
+
+Treat forecasting as an optional advanced feature.
+
+Use appropriate methods only when enough reliable historical data is available.
+
+Include:
+
+Forecast horizon.
+Method used.
+Historical period.
+Evaluation metrics when sufficient holdout data exists.
+Limitations and uncertainty.
+Actual versus forecast comparisons.
+
+Never present forecasts as guaranteed outcomes.
+
+H. Analytical Result Contract
+
+Return versioned, structured JSON containing:
+
+Dataset identifier.
+Analysis-job identifier.
+Dataset schema.
+Metric definitions.
+Calculated metrics.
+Chart-ready series.
+Data-quality warnings.
+Analytical findings.
+Processing metadata.
+Errors or limitations.
+
+Validate all service responses.
+
+Do not invent numerical results, business findings, or correlations.
+
+Clearly distinguish correlation from causation.
+
+11. ANALYSIS JOB MANAGEMENT
+
+Large datasets should not block normal application requests.
+
+Implement a background-job workflow.
+
+Job statuses:
+
+Queued.
+Running.
+Completed.
+Failed.
+Cancelled.
+
+Each job must contain:
+
+Job identifier.
+Dataset identifier.
+Requesting user.
+Analysis type.
+Creation time.
+Start time.
+Completion time.
+Status.
+Progress where available.
+Error summary.
+Result reference.
+
+Requirements:
+
+Enforce job ownership.
+Prevent unauthorized job cancellation.
+Support safe retries.
+Avoid duplicate processing where appropriate.
+Record failures.
+Use timeouts.
+Clean up abandoned temporary files.
+Limit concurrent jobs per user and across the system.
+Avoid placing entire large datasets into memory unnecessarily.
+
+Use a suitable job queue or background worker architecture. Document the selected approach and its operational requirements.
+
+12. C# REPORTING SERVICE
+
+Create an ASP.NET Core Web API responsible for reporting and business rules.
+
+Implement:
+
+Report creation.
+Report metadata.
+Report listing.
+Report details.
+Report status.
+Report export coordination.
+Report deletion where permitted.
+Reporting summaries.
+Health-check endpoints.
+
+Supported report formats should include:
+
+CSV.
+Excel XLSX.
+PDF where a reliable document-generation library is selected.
+
+Report contents may include:
+
+Report title.
+Dataset name.
+Date generated.
+Analysis period.
+KPI summaries.
+Charts or chart references.
+Analytical findings.
+Data-quality warnings.
+Metric definitions.
+Limitations.
+
+Validate report requests.
+
+Ensure users can download only reports they are authorized to access.
+
+Do not include confidential server information in exported documents.
+
+13. NODE.JS API DESIGN
+
+Create a documented REST API with versioned routes.
+
+Use /api/v1 as the initial API prefix.
+
+Example endpoints:
+
+Authentication
+
+POST /api/v1/auth/register
+
+POST /api/v1/auth/login
+
+POST /api/v1/auth/logout
+
+GET /api/v1/auth/me
+
+POST /api/v1/auth/forgot-password
+
+POST /api/v1/auth/reset-password
+
+POST /api/v1/auth/verify-email
+
+User Profile
+
+GET /api/v1/users/me
+
+PATCH /api/v1/users/me
+
+POST /api/v1/users/me/change-password
+
+Datasets
+
+POST /api/v1/datasets
+
+GET /api/v1/datasets
+
+GET /api/v1/datasets/:datasetId
+
+GET /api/v1/datasets/:datasetId/preview
+
+GET /api/v1/datasets/:datasetId/quality
+
+POST /api/v1/datasets/:datasetId/clean
+
+DELETE /api/v1/datasets/:datasetId
+
+Analysis Jobs
+
+POST /api/v1/datasets/:datasetId/analyses
+
+GET /api/v1/analyses
+
+GET /api/v1/analyses/:analysisId
+
+GET /api/v1/analyses/:analysisId/results
+
+POST /api/v1/analyses/:analysisId/cancel
+
+Reports
+
+POST /api/v1/reports
+
+GET /api/v1/reports
+
+GET /api/v1/reports/:reportId
+
+GET /api/v1/reports/:reportId/download
+
+DELETE /api/v1/reports/:reportId
+
+Administration
+
+GET /api/v1/admin/dashboard
+
+GET /api/v1/admin/users
+
+GET /api/v1/admin/users/:userId
+
+PATCH /api/v1/admin/users/:userId/status
+
+GET /api/v1/admin/jobs
+
+GET /api/v1/admin/audit-logs
+
+These are proposed route contracts, not permission to skip implementation.
+
+For every endpoint, implement:
+
+Authentication where required.
+Authorization.
+Input validation.
+Safe error handling.
+Consistent responses.
+Appropriate HTTP status codes.
+Logging.
+Tests.
+
+Document the API using OpenAPI/Swagger.
+
+Never rely solely on hiding frontend buttons to enforce permissions.
+
+14. POSTGRESQL DATABASE DESIGN
+
+Design the database before implementing dependent features.
+
+Include suitable tables for the following entities:
+
+Users
+id.
+full_name.
+email.
+password_hash.
+role.
+account_status.
+email_verified_at.
+created_at.
+updated_at.
+Organizations
+id.
+name.
+created_at.
+updated_at.
+Organization Memberships
+id.
+organization_id.
+user_id.
+membership_role.
+created_at.
+
+Implement organizations only to the extent needed for the chosen tenant model. If a user can belong to only one organization initially, document that assumption and design accordingly.
+
+Datasets
+id.
+owner_user_id.
+organization_id where applicable.
+name.
+description.
+original_filename.
+storage_key.
+file_type.
+file_size.
+row_count.
+column_count.
+status.
+created_at.
+updated_at.
+Dataset Versions
+id.
+dataset_id.
+version_number.
+storage_key.
+transformation_metadata.
+created_at.
+Analysis Jobs
+id.
+dataset_id.
+requested_by_user_id.
+analysis_type.
+status.
+progress.
+result_storage_key or result reference.
+error_summary.
+created_at.
+started_at.
+completed_at.
+Reports
+id.
+owner_user_id.
+dataset_id.
+analysis_job_id.
+title.
+report_type.
+status.
+storage_key.
+created_at.
+Password Reset Tokens
+
+Store only a secure representation of reset tokens, with expiration and usage information.
+
+Email Verification Tokens
+
+Store secure token representations and expiration details.
+
+Audit Logs
+id.
+actor_user_id where applicable.
+event_type.
+target_type.
+target_id.
+safe metadata.
+timestamp.
+Notifications
+id.
+user_id.
+type.
+title.
+message.
+read_at.
+created_at.
+
+Add supporting tables only when required by the implemented functionality.
+
+Apply:
+
+Foreign-key constraints.
+Unique constraints.
+Indexes.
+Appropriate deletion rules.
+Migrations.
+Transactions.
+Consistent naming conventions.
+
+Do not store uploaded binary files directly in PostgreSQL unless a documented requirement justifies that choice. Store files using a private storage layer and keep their references in the database.
+
+Use explicit tenant and ownership rules consistently across all queries.
+
+15. ADMINISTRATION DASHBOARD
+
+Build a separate, protected admin interface.
+
+System Overview
+
+Display:
+
+Total registered users.
+Active accounts.
+Suspended accounts.
+Total datasets.
+Analysis jobs by status.
+Failed processing jobs.
+Reports generated.
+Recent system events.
+User Management
+
+Administrators may:
+
+Search users.
+Filter users by status and role.
+View permitted account details.
+Suspend and reactivate accounts.
+Review account creation dates.
+Review relevant security audit events.
+
+Protect the last active administrator from accidental lockout where appropriate.
+
+Do not allow public registration to create administrators.
+
+Use an explicit, secure bootstrap process to create the first administrator. Document that process in the setup guide.
+
+Job Monitoring
+
+Show:
+
+Queued jobs.
+Running jobs.
+Completed jobs.
+Failed jobs.
+Processing duration.
+Safe error summaries.
+Audit Trail
+
+Record important events such as:
+
+Login success and failure.
+Password-reset requests.
+Password changes.
+Dataset uploads and deletions.
+Analysis-job creation and completion.
+Report exports.
+Account suspension.
+Privileged administrative actions.
+
+Never log passwords, session cookies, access tokens, or reset tokens.
+
+16. FRONTEND PAGES AND NAVIGATION
+
+Implement the following pages.
+
+Public Pages
+Landing Page.
+About Us.
+Contact Us.
+Privacy Policy.
+Terms of Service.
+Login.
+Sign Up.
+Forgot Password.
+Reset Password.
+Email Verification.
+User Pages
+User Dashboard.
+Dataset Management.
+Dataset Upload.
+Dataset Preview.
+Data Quality.
+Data Cleaning.
+Analysis Jobs.
+Analysis Results.
+Reports.
+Report Details.
+User Profile.
+Account Settings.
+Notifications.
+Administrator Pages
+Admin Dashboard.
+User Management.
+User Details.
+Job Monitoring.
+Audit Logs.
+System Settings.
+
+Use protected routes and role-aware navigation.
+
+Show appropriate loading states, empty states, validation messages, and error states.
+
+17. UI/UX DESIGN REQUIREMENTS
+
+Create a polished business intelligence interface.
+
+Design principles:
+
+Professional.
+Clean.
+Modern.
+Responsive.
+Accessible.
+Easy to navigate.
+Suitable for real business use.
+
+Use:
+
+Consistent typography.
+A coherent spacing system.
+Reusable components.
+Clear navigation.
+Accessible contrast.
+Consistent buttons and form controls.
+Tables with sorting and pagination.
+Search and filters.
+Interactive charts.
+Confirmation dialogs for destructive operations.
+Toasts or inline notifications.
+Skeleton loaders or equivalent loading states.
+Clear error recovery instructions.
+
+Provide:
+
+Light theme.
+Dark theme if it can be implemented consistently.
+Sidebar navigation for authenticated dashboards.
+Mobile-friendly navigation.
+Keyboard accessibility.
+Appropriate labels for screen readers.
+
+Do not use fabricated customer testimonials, fake business statistics, or misleading claims.
+
+18. SECURITY REQUIREMENTS
+
+Treat security as a core architectural requirement.
+
+Implement:
+
+Secure password hashing.
+Server-side authentication.
+Server-side authorization.
+Input validation.
+Parameterized database access.
+Protection against SQL injection.
+Appropriate CSRF protection.
+XSS prevention.
+Secure file upload handling.
+Rate limiting.
+Secure cookie configuration.
+CORS restrictions.
+Request-size limits.
+Session expiration and revocation.
+Secrets management.
+Dependency vulnerability checks.
+Safe error responses.
+Audit logging.
+Backup and recovery planning.
+
+Use HTTPS in production.
+
+Never commit credentials, API keys, database passwords, or private environment files to GitHub.
+
+Provide a .env.example containing placeholders only.
+
+Ensure user-supplied files cannot overwrite application files or execute as server code.
+
+Keep uploaded datasets and generated reports private by default.
+
+Apply data-retention and deletion rules consistently.
+
+Do not expose sensitive records through logs, error messages, URLs, or downloadable files.
+
+19. ERROR HANDLING AND OBSERVABILITY
+
+Implement a consistent error-response format.
+
+Distinguish between:
+
+Validation errors.
+Authentication failures.
+Authorization failures.
+Missing resources.
+File-processing errors.
+Analysis failures.
+External-service failures.
+Rate-limit errors.
+Unexpected internal errors.
+
+Use structured logs and correlation IDs.
+
+Add health-check endpoints for Node.js, Python, C#, and the database where appropriate.
+
+Do not return stack traces or internal implementation details to production users.
+
+Provide clear, actionable messages without exposing sensitive information.
+
+Track job failures and processing duration.
+
+20. TESTING REQUIREMENTS
+
+Create automated tests throughout the project.
+
+Frontend
+Registration form validation.
+Login form validation.
+Protected navigation.
+Role-aware navigation.
+Dataset upload states.
+Dashboard rendering.
+Error and empty states.
+Node.js
+Authentication endpoints.
+Authorization middleware.
+Dataset ownership.
+Upload validation.
+Analysis-job creation.
+Report access control.
+Administrator permissions.
+Python
+Data profiling.
+Missing-value detection.
+Duplicate detection.
+Sales calculations.
+Date handling.
+Invalid dataset handling.
+Metric definitions.
+Analysis-result schema validation.
+C#
+Reporting services.
+DTO validation.
+Report status transitions.
+Authorization-related application logic.
+Error handling.
+PostgreSQL and Integration
+Database migrations.
+Referential integrity.
+User isolation.
+Complete analysis workflow.
+Report-generation workflow.
+Failure recovery.
+
+Include negative tests that attempt unauthorized access.
+
+Use synthetic or public datasets for testing. Do not include private business information in the repository.
+
+21. PERFORMANCE AND SCALABILITY
+
+Design for growth without adding unnecessary complexity.
+
+Requirements:
+
+Paginated API responses.
+Indexed database queries.
+Bounded file uploads.
+Background analysis jobs.
+Configurable worker concurrency.
+Efficient data processing.
+Query optimization.
+Controlled memory usage.
+Caching only where appropriate.
+Timeouts and resource limits.
+Cleanup of temporary files.
+Database connection pooling.
+
+Do not load entire large datasets into browser memory.
+
+Avoid unnecessary microservices, premature optimization, and duplicate business logic.
+
+Document performance assumptions and limitations.
+
+22. PROJECT STRUCTURE
+
+Use a clear monorepo structure similar to:
+
+SalesInsight/
+│
+├── frontend/
+│ ├── src/
+│ │ ├── app/
+│ │ ├── components/
+│ │ ├── features/
+│ │ │ ├── auth/
+│ │ │ ├── dashboard/
+│ │ │ ├── datasets/
+│ │ │ ├── analytics/
+│ │ │ ├── reports/
+│ │ │ ├── profile/
+│ │ │ └── admin/
+│ │ ├── hooks/
+│ │ ├── lib/
+│ │ ├── services/
+│ │ ├── types/
+│ │ └── routes/
+│ └── package.json
+│
+├── services/
+│ ├── api-node/
+│ │ ├── src/
+│ │ │ ├── config/
+│ │ │ ├── middleware/
+│ │ │ ├── modules/
+│ │ │ ├── routes/
+│ │ │ ├── services/
+│ │ │ ├── repositories/
+│ │ │ ├── validation/
+│ │ │ └── app.ts
+│ │ └── package.json
+│ │
+│ ├── analytics-python/
+│ │ ├── app/
+│ │ ├── analytics/
+│ │ ├── schemas/
+│ │ ├── tests/
+│ │ └── requirements.txt
+│ │
+│ └── reporting-dotnet/
+│ ├── Controllers/
+│ ├── Services/
+│ ├── Models/
+│ ├── DTOs/
+│ ├── Data/
+│ └── Tests/
+│
+├── database/
+│ ├── migrations/
+│ ├── seeds/
+│ └── README.md
+│
+├── data/
+│ ├── raw/
+│ ├── processed/
+│ └── sample/
+│
+├── storage/
+│ └── README.md
+│
+├── docs/
+│ ├── architecture.md
+│ ├── database-design.md
+│ ├── api-documentation.md
+│ ├── security.md
+│ └── setup-guide.md
+│
+├── scripts/
+├── tests/
+├── .env.example
+├── .gitignore
+├── docker-compose.yml
+└── README.md
+
+Adjust this structure when justified by the selected frameworks. Do not create empty folders or placeholder files without a clear purpose.
+
+Never commit private uploaded datasets, production secrets, virtual environments, build output, or generated private reports.
+
+23. ENVIRONMENT CONFIGURATION
+
+Create an .env.example file containing placeholders for relevant settings, such as:
+
+NODE_ENV
+FRONTEND_URL
+NODE_API_PORT
+DATABASE_URL
+SESSION_SECRET
+COOKIE_SECURE
+PYTHON_SERVICE_URL
+PYTHON_SERVICE_SECRET
+DOTNET_SERVICE_URL
+DOTNET_SERVICE_SECRET
+FILE_STORAGE_PATH
+MAX_UPLOAD_SIZE
+SMTP_HOST
+SMTP_PORT
+SMTP_USER
+SMTP_PASSWORD
+EMAIL_FROM
+
+Use the correct configuration mechanism for each service.
+
+Do not expose server-only secrets to React or public build variables.
+
+Validate required configuration when each service starts.
+
+Document development and production differences.
+
+24. DATASET FOR INITIAL DEVELOPMENT
+
+Use a real, public sales dataset for the first analytical workflow.
+
+A suitable starting point is the Superstore sales dataset available through Kaggle's dataset search.
+
+Kaggle search:
+https://www.kaggle.com/datasets?search=superstore+sales
+
+Before implementing dataset-specific analysis:
+
+Obtain a suitable dataset legally.
+Save it in data/raw/.
+Inspect its actual columns and data types.
+Identify date, sales, profit, quantity, product, category, and regional fields where available.
+Document the dataset's limitations.
+Build the cleaning and analysis workflow around the actual schema.
+
+Do not assume every version of the Superstore dataset has identical columns.
+
+Do not commit restricted, private, or unnecessarily large datasets to the public repository.
+
+Create a small synthetic dataset for automated tests.
+
+25. DEVELOPMENT PHASES
+
+Implement the system in the following order.
+
+Phase 1: Workspace and Environment Audit
+Inspect the current workspace.
+Check installed versions of Node.js, npm, Python, .NET, Git, and PostgreSQL.
+Identify existing project files.
+Identify missing dependencies.
+Check whether PostgreSQL is running.
+Produce a brief implementation plan.
+Do not overwrite working files without inspection.
+Phase 2: Project Foundation
+Create the monorepo structure.
+Configure React and TypeScript.
+Configure Node.js and Express.
+Configure Python.
+Configure ASP.NET Core.
+Establish environment configuration.
+Create initial health checks.
+Set up linting and formatting.
+Initialize Git if needed.
+Phase 3: Database
+Design the database schema.
+Create migrations.
+Implement constraints and indexes.
+Configure database connections.
+Add development seed data.
+Test database operations.
+Phase 4: Authentication and Authorization
+Implement registration.
+Implement login and logout.
+Implement password hashing.
+Implement secure session management.
+Implement password recovery.
+Implement email verification if configured.
+Implement user roles.
+Implement protected frontend routes.
+Implement backend permission checks.
+Test unauthorized access.
+Phase 5: Dataset Management
+Implement uploads.
+Implement file validation.
+Store original files privately.
+Save dataset metadata.
+Implement previews.
+Implement dataset listing and ownership checks.
+Phase 6: Data Quality and Cleaning
+Implement profiling.
+Detect missing values.
+Detect duplicates.
+Validate data types.
+Implement transparent cleaning operations.
+Preserve original datasets.
+Record transformation history.
+Phase 7: Python Analytics
+Implement the first complete sales-analysis workflow.
+Calculate metrics from real data.
+Produce structured JSON results.
+Add tests.
+Document metric formulas and limitations.
+Phase 8: Node.js Orchestration
+Integrate the Python service.
+Implement analysis-job creation.
+Track job status.
+Enforce permissions.
+Handle service errors and timeouts.
+Implement result retrieval.
+Phase 9: C# Reporting
+Implement reporting endpoints.
+Integrate analysis results.
+Generate reports.
+Implement download authorization.
+Add tests.
+Phase 10: React Dashboard
+Implement authentication pages.
+Implement the user dashboard.
+Implement dataset-management pages.
+Implement data-quality views.
+Implement analysis-job views.
+Implement charts and filters.
+Implement report pages.
+Implement account settings.
+Phase 11: Administration
+Implement the protected administrator dashboard.
+Implement account management.
+Implement job monitoring.
+Implement audit-log views.
+Test administrator permissions.
+Phase 12: Integration and Quality Assurance
+Run all services.
+Apply database migrations.
+Test registration and login.
+Upload a real dataset.
+Validate and clean it.
+Run an analysis.
+Display the calculated results.
+Generate a report.
+Test unauthorized access.
+Test service failures.
+Fix defects.
+Phase 13: Deployment Preparation
+Prepare production environment configuration.
+Document HTTPS and domain configuration.
+Configure production database access.
+Configure private file storage.
+Configure email delivery.
+Prepare logging and monitoring.
+Prepare backup and recovery procedures.
+Review dependency vulnerabilities.
+Document deployment steps.
+Phase 14: Portfolio and GitHub
+Write a complete README.
+Document the architecture.
+Add setup instructions.
+Add screenshots using non-sensitive sample data.
+Add API documentation.
+Include tests.
+Include an .env.example.
+Add a license only after choosing appropriate licensing terms.
+Ensure secrets and private datasets are excluded.
+Publish the repository only after reviewing its contents.
+26. DEFINITION OF DONE
+
+The project is not complete merely because the interface looks good.
+
+SalesInsight is considered functional when the following end-to-end workflow succeeds:
+
+A new user opens the public website.
+The user creates an account.
+The application validates and securely stores the account.
+The user verifies their email if verification is enabled.
+The user logs in.
+The application displays their dashboard.
+The user uploads a CSV or XLSX sales dataset.
+The system validates the file and records its metadata.
+The user reviews the data-quality report.
+The user performs supported cleaning operations.
+The Python analytics engine processes the dataset.
+The user sees calculated metrics and charts.
+The user reviews the analysis history.
+The user generates and downloads a report.
+The user logs out and can log in again.
+Another user cannot access the first user's private datasets or reports.
+An administrator can manage permitted system functions.
+Automated tests cover critical workflows and security boundaries.
+The setup documentation allows another developer to run the project.
+The repository contains no committed secrets.
+
+Where email credentials, storage services, or external integrations are unavailable, provide a clearly documented local-development configuration rather than pretending the integration works.
+
+27. STRICT ENGINEERING RULES
+
+Follow these rules throughout implementation:
+
+Inspect before modifying.
+Build incrementally.
+Prefer working, tested code over large volumes of generated code.
+Do not leave core features as TODO comments or fake implementations.
+Do not use hardcoded analytical results.
+Do not use fake authentication.
+Do not rely on frontend-only authorization.
+Do not duplicate analytical calculations across services.
+Do not expose database credentials or private API keys.
+Do not silently discard data.
+Do not fabricate business insights.
+Do not skip database migrations.
+Do not claim tests pass without running them.
+Do not replace real error handling with generic success messages.
+Do not create unnecessary services or dependencies.
+Keep code modular, readable, and maintainable.
+Document assumptions and technical decisions.
+Prefer established, supported libraries.
+Handle empty datasets and missing columns gracefully.
+Report any blockers honestly.
+
+After completing each phase:
+
+Summarize files created or modified.
+Explain the implementation.
+List commands to run.
+Run the relevant tests.
+Report test results honestly.
+Explain known limitations.
+Identify the next phase.
+
+Do not attempt to implement every phase in one uncontrolled code-generation operation.
+
+28. FIRST TASK: START BUILDING THE REAL SYSTEM
+
+Begin with Phase 1.
+
+Inspect the current workspace and determine whether it already contains a project.
+
+Check the availability and versions of:
+
+Node.js.
+npm.
+Python.
+.NET SDK.
+Git.
+PostgreSQL.
+
+Identify which dependencies are installed and which are missing.
+
+Do not delete existing files.
+
+Do not generate the entire application before verifying the environment.
+
+After the audit, present:
+
+The detected environment.
+The existing project structure.
+Missing dependencies.
+Any blockers.
+The exact next commands.
+The files that will be created during Phase 2.
+
+Then implement the project foundation and proceed phase by phase.
+
+Final goal: Deliver a working, secure, maintainable SalesInsight platform that demonstrates professional full-stack development, data analytics, database design, API integration, business intelligence, testing, and software architecture.
