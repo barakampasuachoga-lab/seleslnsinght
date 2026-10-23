@@ -1,0 +1,85 @@
+{
+  "users": [
+    {
+      "id": "usr_admin_001",
+      "name": "Administrator",
+      "email": "admin@gmail.com",
+      "company": "SalesInsight Security Admin",
+      "role": "admin",
+      "accountStatus": "active",
+      "emailVerified": true,
+      "createdAt": "2026-01-01",
+      "lastLoginAt": "2026-10-22 08:30"
+    },
+    {
+      "id": "usr_admin_01",
+      "name": "System Administrator",
+      "email": "admin@salesinsight.io",
+      "company": "SalesInsight Enterprise",
+      "role": "admin",
+      "accountStatus": "active",
+      "emailVerified": true,
+      "createdAt": "2026-01-01",
+      "lastLoginAt": "2026-10-21 05:00"
+    },
+    {
+      "id": "usr_analyst_01",
+      "name": "Senior Sales Analyst",
+      "email": "analyst@retailcorp.com",
+      "company": "Retail Global Corp",
+      "role": "user",
+      "accountStatus": "active",
+      "emailVerified": true,
+      "createdAt": "2026-01-15",
+      "lastLoginAt": "2026-10-21 04:30"
+    },
+    {
+      "id": "usr_manager_01",
+      "name": "Regional Merchandising Manager",
+      "email": "manager@storebrand.com",
+      "company": "StoreBrand Retail",
+      "role": "user",
+      "accountStatus": "active",
+      "emailVerified": true,
+      "createdAt": "2026-02-01",
+      "lastLoginAt": "2026-10-20 18:20"
+    }
+  ],
+  "auditLogs": [
+    {
+      "id": "1",
+      "timestamp": "2026-10-21 05:00",
+      "actorEmail": "admin@salesinsight.io",
+      "eventType": "LOGIN_SUCCESS",
+      "details": "Administrator session authenticated"
+    },
+    {
+      "id": "2",
+      "timestamp": "2026-10-21 04:30",
+      "actorEmail": "analyst@retailcorp.com",
+      "eventType": "LOGIN_SUCCESS",
+      "details": "Analyst session started"
+    },
+    {
+      "id": "3",
+      "timestamp": "2026-10-20 14:10",
+      "actorEmail": "manager@storebrand.com",
+      "eventType": "DATASET_UPLOAD",
+      "details": "Uploaded storebrand_q3.csv (1,420 records)"
+    }
+  ],
+  "activeSessions": [
+    {
+      "sessionId": "sess_init_admin",
+      "userId": "usr_admin_001",
+      "email": "admin@gmail.com",
+      "name": "Administrator",
+      "role": "admin",
+      "loggedInAt": "2026-10-22 08:30",
+      "lastPingAt": 1792657800000,
+      "source": "Primary Workspace Console",
+      "ipAddress": "127.0.0.1"
+    }
+  ],
+  "lastUpdated": "2026-10-22T08:30:00.000Z"
+}

@@ -47,6 +47,20 @@ export interface AdminUserRecord extends UserAccount {
   dashboardsCount: number;
   reportsCount: number;
   failedLoginCount: number;
+  isActiveOnline?: boolean;
+  activeSessionSource?: string;
+}
+
+export interface AdminActiveSession {
+  sessionId: string;
+  userId: string;
+  email: string;
+  name: string;
+  role: string;
+  loggedInAt: string;
+  lastPingAt: number;
+  source: string;
+  ipAddress?: string;
 }
 
 interface AdminDashboardViewProps {
@@ -55,9 +69,19 @@ interface AdminDashboardViewProps {
   datasets: DatasetItem[];
   jobs: AnalysisJobItem[];
   auditLogs: SecurityAuditRecord[];
+  activeSessions?: AdminActiveSession[];
   onUpdateUserStatus: (targetUser: UserAccount) => void;
   onUpdateUserRole: (targetUserId: string, newRole: UserRole) => void;
   onRecordAudit: (eventType: any, details: string) => void;
+  onRefreshSync?: () => void;
+  lastSyncTime?: string;
+  loginAlertToast?: {
+    userName: string;
+    userEmail: string;
+    source: string;
+    timestamp: string;
+  } | null;
+  onDismissAlertToast?: () => void;
 }
 
 export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
@@ -66,9 +90,14 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
   datasets,
   jobs,
   auditLogs,
+  activeSessions = [],
   onUpdateUserStatus,
   onUpdateUserRole,
   onRecordAudit,
+  onRefreshSync,
+  lastSyncTime = 'Live',
+  loginAlertToast,
+  onDismissAlertToast,
 }) => {
   // Navigation within Admin Console
   const [activeTab, setActiveTab] = useState<
