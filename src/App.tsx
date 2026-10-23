@@ -53,6 +53,7 @@ import { DynamicDashboardView } from './analytics/DynamicDashboardView';
 import { DownloadCenterView } from './analytics/DownloadCenterView';
 import { SavedReportsView } from './analytics/SavedReportsView';
 import { AdminDashboardView } from './admin/AdminDashboardView';
+import { NewUserDashboardView } from './analytics/NewUserDashboardView';
 import {
   createSampleSuperstoreDataset,
   createSampleSaasDataset,
@@ -526,7 +527,7 @@ export default function App() {
     return null;
   });
 
-  // Keep users synced to localStorage
+  // Keep users synced to localStorage and window events
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_USERS_KEY, JSON.stringify(users));
@@ -534,6 +535,28 @@ export default function App() {
       // fallback
     }
   }, [users]);
+
+  // Synchronize users state across browser tabs and registration events
+  useEffect(() => {
+    const handleSyncUsers = () => {
+      try {
+        const saved = localStorage.getItem(STORAGE_USERS_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setUsers(parsed);
+          }
+        }
+      } catch {}
+    };
+
+    window.addEventListener('storage', handleSyncUsers);
+    window.addEventListener('salesinsight_users_updated', handleSyncUsers);
+    return () => {
+      window.removeEventListener('storage', handleSyncUsers);
+      window.removeEventListener('salesinsight_users_updated', handleSyncUsers);
+    };
+  }, []);
 
   // Navigation & Authentication States
   const [currentPage, setCurrentPage] = useState<
@@ -879,8 +902,17 @@ export default function App() {
       lastLoginAt: 'Just now',
     };
 
-    setUsers((prev) => [...prev, newUser]);
+    setUsers((prev) => {
+      const updated = [...prev, newUser];
+      try {
+        localStorage.setItem(STORAGE_USERS_KEY, JSON.stringify(updated));
+        window.dispatchEvent(new Event('salesinsight_users_updated'));
+      } catch {}
+      return updated;
+    });
+
     setCurrentUser(newUser);
+
     try {
       localStorage.setItem(
         STORAGE_REMEMBERED_ACCOUNT_KEY,
@@ -904,7 +936,23 @@ export default function App() {
       );
       localStorage.removeItem('salesinsight_has_logged_out');
     } catch {}
-    recordAudit('REGISTER', `New user registered: ${newUser.email}`);
+
+    // Synchronize to backend if service is running
+    try {
+      fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: newUser.name,
+          email: newUser.email,
+          password: signupForm.password,
+          company: newUser.company,
+          acceptTerms: true,
+        }),
+      }).catch(() => {});
+    } catch {}
+
+    recordAudit('REGISTER', `New user registered: ${newUser.name} (${newUser.email})`);
     setAuthSuccess('Account created successfully! Please verify your email.');
     setCurrentPage('verify-email');
   };
@@ -1205,6 +1253,29 @@ export default function App() {
     };
     setSavedDashboards((prev) => [newSaved, ...prev]);
     recordAudit('PROFILE_UPDATED', `Saved personalized dashboard configuration '${name}'`);
+  };
+
+  const handleLoadSampleForUser = (sampleType: 'superstore' | 'saas') => {
+    if (!currentUser) return;
+    const newDs =
+      sampleType === 'superstore'
+        ? createSampleSuperstoreDataset(currentUser.id, currentUser.name)
+        : createSampleSaasDataset(currentUser.id, currentUser.name);
+
+    const questions = generateSuggestedQuestions(newDs);
+    const selected = questions.filter((q) => q.isAvailable).slice(0, 5);
+    const plan = buildAnalysisPlan(selected, [], newDs);
+    handleDashboardGenerated(newDs, plan);
+  };
+
+  const handleResetWorkspace = () => {
+    if (!currentUser) return;
+    if (window.confirm('Reset this workspace to a clean state? This will clear active generated datasets for your account.')) {
+      setDatasets((prev) => prev.filter((d) => d.ownerId !== currentUser.id));
+      setActiveDatasetRecords((prev) => prev.filter((d) => d.ownerId !== currentUser.id));
+      setExportJobs((prev) => prev.filter((j) => j.ownerId !== currentUser.id));
+      recordAudit('PROFILE_UPDATED', `User ${currentUser.email} reset workspace to clean baseline`);
+    }
   };
 
   const handleSendContact = (e: React.FormEvent) => {
@@ -2412,6 +2483,17 @@ Office Supplies,719047.03,122490.80,17.04,31.3
                   <Database className="w-3.5 h-3.5" />
                   <span>SQL Engine</span>
                 </button>
+
+                {accessibleDatasets.length > 0 && currentUser.role !== 'admin' && (
+                  <button
+                    onClick={handleResetWorkspace}
+                    className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs flex items-center space-x-1.5 border border-slate-700"
+                    title="Clear current dataset and start fresh"
+                  >
+                    <RefreshCw className="w-3.5 h-3.5 text-amber-400" />
+                    <span>New Workspace</span>
+                  </button>
+                )}
               </div>
             </div>
 
@@ -2427,11 +2509,26 @@ Office Supplies,719047.03,122490.80,17.04,31.3
                   setWorkflowInitialDataset(null);
                 }}
               />
+            ) : accessibleDatasets.length === 0 && currentUser.role !== 'admin' ? (
+              <NewUserDashboardView
+                currentUser={currentUser}
+                onStartWorkflow={() => {
+                  setWorkflowInitialDataset(null);
+                  setIsWorkflowMode(true);
+                }}
+                onLoadSample={handleLoadSampleForUser}
+                onOpenDownloadCenter={() => setCurrentPage('download-center')}
+                onOpenDatasets={() => setCurrentPage('datasets')}
+              />
             ) : (
               <DynamicDashboardView
                 dataset={currentDynamicDataset}
                 plan={currentDynamicPlan}
-                allDatasets={activeDatasetRecords}
+                allDatasets={
+                  currentUser.role === 'admin'
+                    ? activeDatasetRecords
+                    : activeDatasetRecords.filter((d) => d.ownerId === currentUser.id)
+                }
                 onSelectDataset={(ds) => {
                   setCurrentDynamicDataset(ds);
                   const questions = generateSuggestedQuestions(ds);

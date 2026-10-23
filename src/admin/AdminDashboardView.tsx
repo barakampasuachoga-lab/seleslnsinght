@@ -113,8 +113,15 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
     enableSelfRegistration: true,
   });
 
-  // Admin Notifications State
-  const [notifications, setNotifications] = useState([
+  // Admin Notifications State with automatic inclusion of new user registrations
+  const [notifications, setNotifications] = useState<Array<{
+    id: string;
+    severity: 'critical' | 'warning' | 'info';
+    title: string;
+    message: string;
+    timestamp: string;
+    read: boolean;
+  }>>([
     {
       id: 'notif_1',
       severity: 'critical',
@@ -141,27 +148,73 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
     },
   ]);
 
-  // Enrich user accounts with live relational counts
+  // Synchronize new user registrations into notifications
+  React.useEffect(() => {
+    const regAlerts = auditLogs
+      .filter((a) => a.eventType === 'REGISTER')
+      .map((a) => ({
+        id: `reg_${a.id}`,
+        severity: 'info' as const,
+        title: 'New User Account Created',
+        message: `${a.details}. New tenant workspace provisioned with data isolation.`,
+        timestamp: a.timestamp,
+        read: false,
+      }));
+
+    if (regAlerts.length > 0) {
+      setNotifications((prev) => {
+        const existingIds = new Set(prev.map((n) => n.id));
+        const toAdd = regAlerts.filter((n) => !existingIds.has(n.id));
+        if (toAdd.length === 0) return prev;
+        return [...toAdd, ...prev];
+      });
+    }
+  }, [auditLogs]);
+
+  // Enrich user accounts with live relational counts and sort newest first
   const enrichedUsers: AdminUserRecord[] = useMemo(() => {
-    return users.map((u) => {
+    const mapped = users.map((u) => {
       const userDatasets = datasets.filter((d) => d.ownerId === u.id || d.ownerName === u.name);
       const userJobs = jobs.filter((j) => j.ownerId === u.id || j.ownerName === u.name);
       const userAudits = auditLogs.filter((a) => a.actorEmail === u.email);
       const failedAttempts = userAudits.filter((a) => a.eventType === 'LOGIN_FAILED').length;
-      const loginSessions = Math.max(1, userAudits.filter((a) => a.eventType === 'LOGIN_SUCCESS').length + 2);
+      const isNewAccount =
+        u.lastLoginAt === 'Just now' ||
+        u.createdAt === new Date().toISOString().substring(0, 10) ||
+        (u.id.startsWith('usr_') && !isNaN(Number(u.id.replace('usr_', ''))));
+
+      const loginSessions = isNewAccount && userDatasets.length === 0
+        ? 1
+        : Math.max(1, userAudits.filter((a) => a.eventType === 'LOGIN_SUCCESS').length + 2);
 
       return {
         ...u,
         loginSessionsCount: loginSessions,
-        lastActivityAt: u.lastLoginAt || '2026-10-21 04:30',
+        lastActivityAt: u.lastLoginAt || 'Just now',
         datasetsCount: userDatasets.length,
-        jobsCount: userJobs.length || (u.role === 'admin' ? 8 : 4),
-        dashboardsCount: Math.max(1, userDatasets.length * 2),
-        reportsCount: Math.max(1, userDatasets.length + 1),
+        jobsCount: userDatasets.length === 0 ? 0 : (userJobs.length || 4),
+        dashboardsCount: userDatasets.length === 0 ? 0 : Math.max(1, userDatasets.length * 2),
+        reportsCount: userDatasets.length === 0 ? 0 : Math.max(1, userDatasets.length + 1),
         failedLoginCount: failedAttempts,
       };
     });
+
+    // Sort newest registrations first (by timestamp in id or createdAt)
+    return mapped.sort((a, b) => {
+      const aTime = a.id.startsWith('usr_') && !isNaN(Number(a.id.replace('usr_', '')))
+        ? Number(a.id.replace('usr_', ''))
+        : (a.createdAt ? new Date(a.createdAt).getTime() : 0);
+      const bTime = b.id.startsWith('usr_') && !isNaN(Number(b.id.replace('usr_', '')))
+        ? Number(b.id.replace('usr_', ''))
+        : (b.createdAt ? new Date(b.createdAt).getTime() : 0);
+      return bTime - aTime;
+    });
   }, [users, datasets, jobs, auditLogs]);
+
+  // Recent new user registrations for the Overview tab
+  const recentNewUsers = useMemo(() => {
+    return enrichedUsers;
+  }, [enrichedUsers]);
 
   // Filtered users for table
   const filteredUsers = useMemo(() => {
@@ -541,6 +594,118 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
             </div>
           </div>
 
+          {/* Section: Recently Registered Tenant Users */}
+          <div className="bg-slate-900 border border-slate-800 rounded-xl p-5">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
+              <div>
+                <div className="flex items-center space-x-2">
+                  <h3 className="font-semibold text-white text-base">New Tenant &amp; User Registrations</h3>
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold flex items-center space-x-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                    <span>Live Registry ({users.length} Total Users)</span>
+                  </span>
+                </div>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  Newly created user accounts and isolated tenant spaces. Administrators can inspect status and configure RBAC roles.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setActiveTab('users')}
+                className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold flex items-center space-x-1 border border-slate-700 transition-colors"
+              >
+                <span>Manage Users Registry ({users.length})</span>
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
+            <div className="overflow-x-auto rounded-xl border border-slate-800/80">
+              <table className="w-full text-xs text-left text-slate-300">
+                <thead className="bg-slate-950 text-slate-400 uppercase text-[10px] tracking-wider border-b border-slate-800">
+                  <tr>
+                    <th className="py-2.5 px-3">User &amp; Email</th>
+                    <th className="py-2.5 px-3">Organization / Tenant</th>
+                    <th className="py-2.5 px-3">Role</th>
+                    <th className="py-2.5 px-3">Registration Date</th>
+                    <th className="py-2.5 px-3">Account Status</th>
+                    <th className="py-2.5 px-3 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800/60 bg-slate-950/40">
+                  {recentNewUsers.map((u) => {
+                    const isNew =
+                      u.lastLoginAt === 'Just now' ||
+                      u.createdAt === new Date().toISOString().substring(0, 10) ||
+                      (u.id.startsWith('usr_') && !isNaN(Number(u.id.replace('usr_', ''))));
+
+                    return (
+                      <tr key={u.id} className="hover:bg-slate-800/40 transition-colors">
+                        <td className="py-2.5 px-3">
+                          <div className="flex items-center space-x-2.5">
+                            <div className="w-7 h-7 rounded-full bg-blue-600/20 border border-blue-500/30 flex items-center justify-center font-bold text-xs text-blue-300 shrink-0">
+                              {u.name.charAt(0).toUpperCase()}
+                            </div>
+                            <div>
+                              <div className="flex items-center space-x-1.5">
+                                <span className="font-semibold text-white">{u.name}</span>
+                                {isNew && (
+                                  <span className="text-[9px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-1.5 py-0.2 rounded font-bold uppercase tracking-wider flex items-center space-x-1">
+                                    <span className="w-1 h-1 rounded-full bg-emerald-400 animate-pulse" />
+                                    <span>NEW USER</span>
+                                  </span>
+                                )}
+                              </div>
+                              <span className="text-[11px] text-slate-400 font-mono">{u.email}</span>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="py-2.5 px-3 text-slate-300">{u.company || 'Personal Workspace'}</td>
+                        <td className="py-2.5 px-3">
+                          <span
+                            className={`px-2 py-0.5 rounded font-bold text-[10px] uppercase ${
+                              u.role === 'admin'
+                                ? 'bg-purple-950 text-purple-300 border border-purple-800'
+                                : 'bg-slate-800 text-slate-300 border border-slate-700'
+                            }`}
+                          >
+                            {u.role}
+                          </span>
+                        </td>
+                        <td className="py-2.5 px-3 text-slate-400 font-mono text-[11px]">
+                          {u.createdAt} {u.lastLoginAt === 'Just now' ? '(Just now)' : ''}
+                        </td>
+                        <td className="py-2.5 px-3">
+                          <span
+                            className={`px-2 py-0.5 rounded font-bold text-[10px] uppercase flex items-center space-x-1 w-max ${
+                              u.accountStatus === 'active'
+                                ? 'bg-emerald-950 text-emerald-300 border border-emerald-800'
+                                : 'bg-rose-950 text-rose-300 border border-rose-800'
+                            }`}
+                          >
+                            <span className={`w-1.5 h-1.5 rounded-full ${u.accountStatus === 'active' ? 'bg-emerald-400' : 'bg-rose-400'}`} />
+                            <span>{u.accountStatus}</span>
+                          </span>
+                        </td>
+                        <td className="py-2.5 px-3 text-right">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSelectedUserForDetail(u);
+                            }}
+                            className="text-blue-400 hover:text-blue-300 font-medium text-xs px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 transition-colors"
+                          >
+                            Inspect User
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
           {/* Activity Visualizations & Analytics Charts */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Chart 1: System Activity Trends */}
@@ -726,6 +891,14 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
                               {isCurrentUser && (
                                 <span className="text-[10px] bg-blue-500/20 text-blue-400 px-1.5 py-0.2 rounded font-mono">
                                   You
+                                </span>
+                              )}
+                              {(u.lastLoginAt === 'Just now' ||
+                                u.createdAt === new Date().toISOString().substring(0, 10) ||
+                                (u.id.startsWith('usr_') && !isNaN(Number(u.id.replace('usr_', ''))))) && (
+                                <span className="text-[9px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-1.5 py-0.2 rounded font-bold uppercase tracking-wider flex items-center space-x-1">
+                                  <span className="w-1 h-1 rounded-full bg-emerald-400 animate-pulse" />
+                                  <span>NEW</span>
                                 </span>
                               )}
                             </div>
